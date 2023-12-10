@@ -19,7 +19,7 @@ package array
 //Output: 0
 //Explanation: The result cannot be 2, because [-2,-1] is not a subarray.
 
-func maxProduct(nums []int) int {
+func MaxProduct(nums []int) int {
 	maximumProduct := nums[0]
 	currentProductPositive := 1
 	currentProductNegative := 1
