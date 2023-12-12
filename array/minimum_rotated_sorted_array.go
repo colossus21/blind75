@@ -28,57 +28,19 @@ package array
 //Output: 11
 //Explanation: The original array was [11,13,15,17] and it was rotated 4 times.
 
-/*
-Analysis:
-[1, 2, 3, 4 , 5] l = 1, r = 5, m = 3 [l < m < r]
-[5, 1, 2, 3, 4] l = 5, r = 4, m = 2 [l > r > m]
-[3, 4, 5, 1, 2] l = 3, r = 2, m = 5 [ m > l > r]
-[2, 3, 4, 5, 1]
-*/
-
 func FindMin(nums []int) int {
 	left := 0
 	right := len(nums) - 1
 
-	lowest := -1
+	for left < right {
+		mid := (left + right) / 2
 
-	for {
-		mid := (right + left) / 2
-
-		if nums[mid] <= nums[left] && nums[mid] <= nums[right] {
-			lowest = nums[mid]
-			break
-		}
-
-		/*
-			[3,4,1,2]
-			If left elem is greater than the right element,
-			lower element is on the right sight, else on the left side
-
-			0 + 4 / 2 = 2, arr[2] = 1
-			arr[2] < left && arr[2] < right [Solved]
-
-			[3,4,5,6,7,0,1,2]
-			0 + 7 /2 = 3, arr[3] = 6
-			arr[3] > left [Go right], l = 3, r = 7
-			3 + 7 = 10 / 2 = 5, arr[5] = 0
-			arr[5] < left && arr[5] < right [Solved]
-
-			[6,0,1,2,3,4,5]
-			0+6 / 2 = 3, arr[3] = 2
-			arr[3] < left [Go left], l = 0, r = 2
-			2 + 6 / 2 = 4, arr[4] = 3
-		*/
-
-		if nums[right] > nums[left] {
-			right = mid
-			left = 0
+		if nums[mid] > nums[right] {
+			left = mid + 1
 		} else {
-			left = mid
-			right = len(nums) - 1
+			right = mid
 		}
-
 	}
 
-	return lowest
+	return nums[left]
 }
