@@ -1,7 +1,5 @@
 package array
 
-import "fmt"
-
 /*
 	left := 0
 	right := len(nums) - 1
@@ -20,6 +18,10 @@ import "fmt"
 */
 
 func Search(nums []int, target int) int {
+	if nums[0] == target {
+		return 0
+	}
+
 	// Find the lowest number
 	left := 0
 	right := len(nums) - 1
@@ -32,7 +34,7 @@ func Search(nums []int, target int) int {
 	*/
 
 	index := -1
-	fmt.Println(nums)
+
 	for left < right {
 		mid := (left + right) / 2
 
@@ -40,7 +42,15 @@ func Search(nums []int, target int) int {
 			index = mid
 			break
 		}
-		fmt.Println("A L=", left, "R=", right, "M=", mid, " [ L , R, M ] =", "[", nums[left], ",", nums[mid], ",", nums[right], "]")
+
+		if nums[left] == target {
+			return left
+		}
+
+		if nums[right] == target {
+			return right
+		}
+
 		/*
 			1 2 3 4 5	-L < R
 			5 1 2 3 4	=L > R	-L > M
@@ -48,41 +58,36 @@ func Search(nums []int, target int) int {
 			3 4 5 1 2	=L > R	=L < M
 			2 3 4 5 1	=L > R	=L < M
 		*/
-
-		perfectlySorted := nums[left] <= nums[right]
-		if perfectlySorted {
-			fmt.Println("SORTED LOGIC")
+		if nums[left] <= nums[mid] && nums[mid] < nums[right] {
+			// target in left-mid
 			if target <= nums[mid] {
-				left = mid + 1
-			} else {
 				right = mid
+			} else {
+				left = mid + 1
 			}
 		} else {
-			if nums[left] > nums[mid] {
-				if target <= nums[mid] {
-					fmt.Println("L > M && T <= M :: R = M")
-					right = mid
-				} else {
-					fmt.Println("L > M && T > M :: L = M")
+			/*
+				5 1 2 3 4	M < R
+				4 5 1 2 3	M < R
+			*/
+			if nums[mid] < nums[right] {
+				if target >= nums[mid] && target <= nums[right] {
 					left = mid + 1
+				} else {
+					right = mid
 				}
 			} else {
-				if target <= nums[mid] {
-					fmt.Println("L <= M && T <= M :: R = M")
+				/*
+					3 4 5 1 2	M > R
+					2 3 4 5 1	M > R
+				*/
+				if target >= nums[left] && target <= nums[mid] {
 					right = mid
 				} else {
-					fmt.Println("L <= M && T <= M :: L = M")
 					left = mid + 1
 				}
 			}
 		}
-		fmt.Println("B L=", left, "R=", right, "M=", mid)
-	}
-	if nums[left] == target {
-		return left
-	}
-	if nums[right] == target {
-		return right
 	}
 	return index
 }
