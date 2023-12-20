@@ -1,10 +1,5 @@
 package array
 
-import (
-	"container/heap"
-	"fmt"
-)
-
 /*
 Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.
 
@@ -33,9 +28,9 @@ Explanation: The only possible triplet sums up to 0.
 */
 
 func ThreeSum(nums []int) [][]int {
-	var pos map[int]int
-	var neg map[int]int
-	var zer []int
+	var pos = make(map[int]int)
+	var neg = make(map[int]int)
+	var zer int
 
 	for i := range nums {
 		n := nums[i]
@@ -54,19 +49,59 @@ func ThreeSum(nums []int) [][]int {
 				neg[n] = val + 1
 			}
 		} else {
-			zer = append(zer, 0)
+			zer++
 		}
 	}
 
-	threeSums := 0
+	var res [][]int
+	zeroUsed := 0
 
-	for i := 0; i < len(zer); i++ {
+	for i := 0; i < zer; i++ {
 		// for every positive there should be a negative
-		for pk, pv := range pos {
-			if pv >= 0 {
-				nk := -1 * pk
-				nv, ok := {}
+		for posN, posNCount := range pos {
+			if posNCount > 0 {
+				negN := -1 * posN
+				negNCount, negNExists := neg[negN]
+				if negNExists && negNCount > 0 {
+					res = append(res, []int{0, negN, posN})
+					pos[posN]--
+					neg[negN]--
+					zeroUsed++
+				}
 			}
 		}
 	}
+
+	remainingZeros := zer - zeroUsed
+	if remainingZeros > 2 {
+		numArrayWithAllZeros := remainingZeros / 3
+		for numArrayWithAllZeros > 0 {
+			res = append(res, []int{0, 0, 0})
+			numArrayWithAllZeros--
+		}
+	}
+
+	prevPos := -1
+	for n, c := range pos {
+		if c > 0 {
+			if c == -1 {
+				prevPos = n
+				continue
+			}
+			sumOfTwoPos := n + prevPos
+			requiredNeg := -1 * sumOfTwoPos
+			negNCount, negNExists := neg[requiredNeg]
+			if !negNExists || negNCount <= 0 {
+				prevPos = n
+				continue
+			}
+			res = append(res, []int{requiredNeg, n, prevPos})
+			pos[n]--
+			pos[prevPos]--
+			neg[requiredNeg]--
+			prevPos = n
+		}
+	}
+
+	return res
 }
