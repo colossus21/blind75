@@ -1,5 +1,10 @@
 package array
 
+import (
+	"container/heap"
+	"fmt"
+)
+
 /*
 Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.
 
@@ -28,5 +33,40 @@ Explanation: The only possible triplet sums up to 0.
 */
 
 func ThreeSum(nums []int) [][]int {
+	var pos map[int]int
+	var neg map[int]int
+	var zer []int
 
+	for i := range nums {
+		n := nums[i]
+		if n > 0 {
+			val, ok := pos[n]
+			if !ok {
+				pos[n] = 1
+			} else {
+				pos[n] = val + 1
+			}
+		} else if n < 0 {
+			val, ok := neg[n]
+			if !ok {
+				neg[n] = 1
+			} else {
+				neg[n] = val + 1
+			}
+		} else {
+			zer = append(zer, 0)
+		}
+	}
+
+	threeSums := 0
+
+	for i := 0; i < len(zer); i++ {
+		// for every positive there should be a negative
+		for pk, pv := range pos {
+			if pv >= 0 {
+				nk := -1 * pk
+				nv, ok := {}
+			}
+		}
+	}
 }
