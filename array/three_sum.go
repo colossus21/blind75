@@ -1,5 +1,7 @@
 package array
 
+import "fmt"
+
 /*
 Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.
 
@@ -28,80 +30,35 @@ Explanation: The only possible triplet sums up to 0.
 */
 
 func ThreeSum(nums []int) [][]int {
-	var pos = make(map[int]int)
-	var neg = make(map[int]int)
-	var zer int
-
-	for i := range nums {
-		n := nums[i]
-		if n > 0 {
-			val, ok := pos[n]
-			if !ok {
-				pos[n] = 1
-			} else {
-				pos[n] = val + 1
-			}
-		} else if n < 0 {
-			val, ok := neg[n]
-			if !ok {
-				neg[n] = 1
-			} else {
-				neg[n] = val + 1
-			}
-		} else {
-			zer++
-		}
-	}
-
+	usedIndices := make(map[string]bool)
 	var res [][]int
-	zeroUsed := 0
-
-	for i := 0; i < zer; i++ {
-		// for every positive there should be a negative
-		for posN, posNCount := range pos {
-			if posNCount > 0 {
-				negN := -1 * posN
-				negNCount, negNExists := neg[negN]
-				if negNExists && negNCount > 0 {
-					res = append(res, []int{0, negN, posN})
-					pos[posN]--
-					neg[negN]--
-					zeroUsed++
+	for i := 0; i < len(nums); i++ {
+		for j := 0; j < len(nums); j++ {
+			for k := 0; k < len(nums); k++ {
+				if i != j && i != k && j != k {
+					if nums[i]+nums[j]+nums[k] == 0 {
+						hash := h(nums[i], nums[j], nums[k])
+						if !usedIndices[hash] {
+							res = append(res, []int{nums[i], nums[j], nums[k]})
+							usedIndices[hash] = true
+						}
+					}
 				}
 			}
 		}
 	}
-
-	remainingZeros := zer - zeroUsed
-	if remainingZeros > 2 {
-		numArrayWithAllZeros := remainingZeros / 3
-		for numArrayWithAllZeros > 0 {
-			res = append(res, []int{0, 0, 0})
-			numArrayWithAllZeros--
-		}
-	}
-
-	prevPos := -1
-	for n, c := range pos {
-		if c > 0 {
-			if c == -1 {
-				prevPos = n
-				continue
-			}
-			sumOfTwoPos := n + prevPos
-			requiredNeg := -1 * sumOfTwoPos
-			negNCount, negNExists := neg[requiredNeg]
-			if !negNExists || negNCount <= 0 {
-				prevPos = n
-				continue
-			}
-			res = append(res, []int{requiredNeg, n, prevPos})
-			pos[n]--
-			pos[prevPos]--
-			neg[requiredNeg]--
-			prevPos = n
-		}
-	}
-
 	return res
+}
+
+func h(i, j, k int) string {
+	if i < j {
+		i, j = j, i
+	}
+	if j < k {
+		j, k = k, j
+	}
+	if i < j {
+		i, j = j, i
+	}
+	return fmt.Sprintf(`%v-%v-%v`, i, j, k)
 }
